@@ -41,8 +41,37 @@ class Processor():
         for col in data_type_f.columns:
             print(f"For column: {col}")
             print(data_type_f[col].unique())
+            print(type(data_type_f[col].unique()))
             print(f"Entire number of row : {data_type_f.shape[0]}\nNumber of unique values: {len(data_type_f[col].unique())}")
             print("\n\n")
+        
+        # All the column that have type object and that are not timestamp and that have a unique count values lower than the entire amount of data point (not primary keys) shall be mapped into categorical type data
+        # ["User_ID", "Transaction_Type", "Device_Type", "Location", "Merchant_Category", "Card_Type", "Authentication_Method"]
+        column_to_be_mapped = []
+        
+        for col in df.columns:
+            if df[col].dtypes == "object" and col != "Timestamp" and len(df[col].unique()) < df.shape[0]:
+                column_to_be_mapped.append(col)
+
+        print(column_to_be_mapped)
+        
+        mapping_storage = {}
+        
+        for col in column_to_be_mapped:
+            df[col], uniques = pd.factorize(df[col])
+            map_ = {val: i for i, val in enumerate(uniques)}
+            mapping_storage[col] = {"map_":map_}
+        
+        # Timestamp processing from Timestamp to Year Month Day
+        
+        
+
+        
+        print("Note: \nTransaction IDs are unique" \
+        "\nTimestamp is mostly unique but two transaction from different user can happen at the same time." \
+        "\nUser ID is unique to the user but can happen several times as a user can make several transactions")
+
+
 
 
     
