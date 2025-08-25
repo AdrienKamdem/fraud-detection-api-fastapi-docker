@@ -53,6 +53,7 @@ class Processor():
             if df[col].dtypes == "object" and col != "Timestamp" and len(df[col].unique()) < df.shape[0]:
                 column_to_be_mapped.append(col)
 
+        print("\n\nColumns to be mapped")
         print(column_to_be_mapped)
         
         mapping_storage = {}
@@ -61,11 +62,25 @@ class Processor():
             df[col], uniques = pd.factorize(df[col])
             map_ = {val: i for i, val in enumerate(uniques)}
             mapping_storage[col] = {"map_":map_}
+
+        print("\n\nExample")
+        print(df[column_to_be_mapped[0]])
         
         # Timestamp processing from Timestamp to Year Month Day
-        
-        
+        df["Timestamp"] = pd.to_datetime(df["Timestamp"], errors="coerce")
+        df["year"]   = df["Timestamp"].dt.year
+        df["month"]  = df["Timestamp"].dt.month
+        df["day"]    = df["Timestamp"].dt.day
+        df["hour"]   = df["Timestamp"].dt.hour
+        df["minute"] = df["Timestamp"].dt.minute
+        df["second"] = df["Timestamp"].dt.second
 
+        print("\n\nDate Processing Results")
+        print(df.columns)
+        print(df.head(5))
+
+        # Processing Done
+        print(df.dtypes)
         
         print("Note: \nTransaction IDs are unique" \
         "\nTimestamp is mostly unique but two transaction from different user can happen at the same time." \
