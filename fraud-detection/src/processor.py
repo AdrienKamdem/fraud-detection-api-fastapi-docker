@@ -2,7 +2,7 @@ import csv
 import os
 import pandas as pd
 import logging
-import sys
+import matplotlib.pyplot as plt
 
 
 logger = logging.getLogger()
@@ -16,7 +16,7 @@ class Processor():
     def __str__(self):
         pass
     
-    def data_analysis(self):
+    def processing_data(self)->pd.DataFrame:
 
         df = pd.read_csv(self.path)
 
@@ -86,15 +86,20 @@ class Processor():
         "\nTimestamp is mostly unique but two transaction from different user can happen at the same time." \
         "\nUser ID is unique to the user but can happen several times as a user can make several transactions")
 
-
-
-
+        return df
     
-    def processing_data(self):
-        pass
+    def data_analysis(self, df:pd.DataFrame):
+        col_stats_ = []
+        for col in df.columns:
+            if df[col].dtypes == "float64":
+                col_stats_.append(col)
+        print(df[col_stats_].describe())
+        print("\n\nFinal analysis")
+        print(df[["IP_Address_Flag", "Previous_Fraudulent_Activity", "Daily_Transaction_Count", "Failed_Transaction_Count_7d", "Card_Age", "Is_Weekend"]].head(5))
 
 if __name__ == "__main__":
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     path = os.path.join(BASE_DIR, "data", "synthetic_fraud_dataset.csv")
     dataset = Processor(path=path)
-    dataset.data_analysis()
+    df = dataset.processing_data()
+    dataset.data_analysis(df=df)
